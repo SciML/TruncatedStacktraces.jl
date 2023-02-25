@@ -37,7 +37,7 @@ TruncatedStacktraces.VERBOSE[] = false
 ## How to Opt A Package Into TruncatedStacktraces.jl
 
 Opting into TruncatedStacktraces.jl is easy: for every type that you want to omit the printing of something,
-write an overload on `Base.show` on the DataType which is conditional on `TruncatedStacktraces.VERBOSE_PRINT[]`.
+write an overload on `Base.show` on the DataType which is conditional on `TruncatedStacktraces.VERBOSE[]`.
 For example, the following does this for the `SciMLBase.ODEProblem`:
 
 ```julia
