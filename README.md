@@ -18,7 +18,7 @@ But if you want to see the type in full glory, say to share with developers on D
 the entire stacktrace via simply running:
 
 ```julia
-TruncatedStacktraces.VERBOSE_PRINT[] = true
+TruncatedStacktraces.VERBOSE[] = true
 ```
 
 then if you run the code to error again, it will print out exactly what everyone wants to read:
@@ -31,7 +31,7 @@ then if you run the code to error again, it will print out exactly what everyone
  Beautiful. You can turn it back into the not beautiful short stacktrace with the command:
 
  ```julia
-TruncatedStacktraces.VERBOSE_PRINT[] = false
+TruncatedStacktraces.VERBOSE[] = false
 ```
 
 ## How to Opt A Package Into TruncatedStacktraces.jl
@@ -47,7 +47,7 @@ function Base.show(io::IO,
                                                                                      isinplace,
                                                                                      P, F,
                                                                                      K, PT}
-    if TruncatedStacktraces.VERBOSE_PRINT[]
+    if TruncatedStacktraces.VERBOSE[]
         print(io, "ODEProblem{$uType, $tType, $isinplace, $P, $F, $K, $PT}")
     else
         print(io, "ODEProblem{$isinplace,$uType,$tType,…}")
