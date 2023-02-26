@@ -13,11 +13,11 @@ function __init__()
     for type in InteractiveUtils.subtypes(Exception)
         if type == MethodError
             Base.Experimental.register_error_hint(type) do io, e, args, kwargs
-                println(io, VERBOSE_MSG)
+                !VERBOSE[] && println(io, VERBOSE_MSG)
             end
         else
             Base.Experimental.register_error_hint(type) do io, e
-                println(io, VERBOSE_MSG)
+                !VERBOSE[] && println(io, VERBOSE_MSG)
             end
         end
     end
