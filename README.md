@@ -1,4 +1,4 @@
-# TruncatedStacktraces.jl: Truncated and Simpler Stacktraces for the Julia Programming Langauge
+# TruncatedStacktraces.jl: Truncated and Simpler Stacktraces for the Julia Programming Language
 
 Don't you wish Julia stacktraces were simpler? Introducing TruncatedStacktraces.jl! The purpose of this
 package is to give package authors a single uniform system for implementing truncation of type printing
