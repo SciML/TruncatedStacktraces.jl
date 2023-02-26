@@ -24,7 +24,6 @@ using Test, TruncatedStacktraces
         showerror(io, e)
         error_msg[] = String(take!(io))
     end
-    x
     @test error_msg[] ==
           "UndefVarError: x not defined"
 end
