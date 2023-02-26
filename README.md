@@ -18,7 +18,7 @@ But if you want to see the type in full glory, say to share with developers on D
 the entire stacktrace via simply running:
 
 ```julia
-TruncatedStacktraces.VERBOSE_PRINT[] = true
+TruncatedStacktraces.VERBOSE[] = true
 ```
 
 then if you run the code to error again, it will print out exactly what everyone wants to read:
@@ -31,13 +31,13 @@ then if you run the code to error again, it will print out exactly what everyone
  Beautiful. You can turn it back into the not beautiful short stacktrace with the command:
 
  ```julia
-TruncatedStacktraces.VERBOSE_PRINT[] = false
+TruncatedStacktraces.VERBOSE[] = false
 ```
 
 ## How to Opt A Package Into TruncatedStacktraces.jl
 
 Opting into TruncatedStacktraces.jl is easy: for every type that you want to omit the printing of something,
-write an overload on `Base.show` on the DataType which is conditional on `TruncatedStacktraces.VERBOSE_PRINT[]`.
+write an overload on `Base.show` on the DataType which is conditional on `TruncatedStacktraces.VERBOSE[]`.
 For example, the following does this for the `SciMLBase.ODEProblem`:
 
 ```julia
@@ -47,7 +47,7 @@ function Base.show(io::IO,
                                                                                      isinplace,
                                                                                      P, F,
                                                                                      K, PT}
-    if TruncatedStacktraces.VERBOSE_PRINT[]
+    if TruncatedStacktraces.VERBOSE[]
         print(io, "ODEProblem{$uType, $tType, $isinplace, $P, $F, $K, $PT}")
     else
         print(io, "ODEProblem{$isinplace,$uType,$tType,…}")
