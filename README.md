@@ -55,6 +55,13 @@ function Base.show(io::IO,
 end
 ```
 
+Alternatively, the same code can be generated automatically using the convenience macro
+`TruncatedStacktraces.@truncate_stacktrace`:
+
+```julia
+TruncatedStacktraces.@truncate_stacktrace ODEProblem 3 1 2
+```
+
 For any new error exception you add to your package, make sure to include the note from TruncatedStacktraces.jl on
 how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG)` to the bottom of any error message.
 
