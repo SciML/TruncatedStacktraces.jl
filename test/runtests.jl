@@ -11,7 +11,7 @@ using Test, TruncatedStacktraces
         error_msg[] = String(take!(io))
     end
     @test error_msg[] ==
-          "UndefVarError: x not defined" *
+          "UndefVarError: `x` not defined" *
           "\n\nSome of the types have been truncated in the" *
           " stacktrace for improved reading. To emit complete " *
           "information\nin the stack trace, evaluate " *
@@ -25,5 +25,5 @@ using Test, TruncatedStacktraces
         error_msg[] = String(take!(io))
     end
     @test error_msg[] ==
-          "UndefVarError: x not defined"
+          "UndefVarError: `x` not defined"
 end
