@@ -67,7 +67,7 @@ macro truncate_stacktrace(l::Symbol, short_display...)
         else
             print(io,
                   string($l) * "{" * join([$(whereparams[[short_display...]]...)], ", ") *
-                  $(length(short_display) == 0 ? "" : ", ") * "...}")
+                  $(length(short_display) == 0 ? "" : ",") * "…}")
         end
     end
 
