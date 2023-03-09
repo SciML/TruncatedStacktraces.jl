@@ -62,6 +62,8 @@ Alternatively, the same code can be generated automatically using the convenienc
 TruncatedStacktraces.@truncate_stacktrace ODEProblem 3 1 2
 ```
 
+where `3 1 2` gives the order of the types to print, with indices corresponding to the original type.
+
 For any new error exception you add to your package, make sure to include the note from TruncatedStacktraces.jl on
 how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG)` to the bottom of any error message.
 
