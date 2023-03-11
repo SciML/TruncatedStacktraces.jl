@@ -1,7 +1,7 @@
 module TruncatedStacktraces
 
 using InteractiveUtils, MacroTools
-const VERBOSE = Ref(false)
+const VERBOSE = Ref(parse(Bool, get(ENV, "CI", "false")))
 
 VERBOSE_MSG = """
 
