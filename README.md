@@ -65,6 +65,10 @@ TruncatedStacktraces.@truncate_stacktrace ODEProblem 3 1 2
 For any new error exception you add to your package, make sure to include the note from TruncatedStacktraces.jl on
 how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG)` to the bottom of any error message.
 
+## Default values
+
+`TruncatedStacktraces.VERBOSE[]` defaults to `false` for non-CI workflows and to `true` for CI jobs.
+
 ## FAQ: Why is this not in Base Julia?
 
 There are attempts like https://github.com/JuliaLang/julia/pull/48444, but no one agrees on what exactly to do and how to
