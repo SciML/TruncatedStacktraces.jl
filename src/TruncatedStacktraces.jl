@@ -1,7 +1,9 @@
 module TruncatedStacktraces
 
-using InteractiveUtils, MacroTools
+using InteractiveUtils, MacroTools, Preferences
+
 const VERBOSE = Ref(parse(Bool, get(ENV, "CI", "false")))
+const DISABLE_TRUNCATED_STACKTRACES = @load_preference("disable", false)
 
 VERBOSE_MSG = """
 
@@ -10,14 +12,16 @@ Some of the types have been truncated in the stacktrace for improved reading. To
 in the stack trace, evaluate `TruncatedStacktraces.VERBOSE[] = true` and re-run the code."""
 
 function __init__()
-    for type in InteractiveUtils.subtypes(Exception)
-        if type == MethodError
-            Base.Experimental.register_error_hint(type) do io, e, args, kwargs
-                !VERBOSE[] && println(io, VERBOSE_MSG)
-            end
-        else
-            Base.Experimental.register_error_hint(type) do io, e
-                !VERBOSE[] && println(io, VERBOSE_MSG)
+    @static if !DISABLE_TRUNCATED_STACKTRACES
+        for type in InteractiveUtils.subtypes(Exception)
+            if type == MethodError
+                Base.Experimental.register_error_hint(type) do io, e, args, kwargs
+                    !VERBOSE[] && println(io, VERBOSE_MSG)
+                end
+            else
+                Base.Experimental.register_error_hint(type) do io, e
+                    !VERBOSE[] && println(io, VERBOSE_MSG)
+                end
             end
         end
     end
@@ -41,40 +45,44 @@ Invoking `@truncate_stacktrace MyCustomType 3 1` generates the following code bl
 automatically:
 
 ```julia
-function Base.show(io::IO, t::Type{(MyCustomType){var"##301", var"##302", var"##303"}}; ) where {var"##301", var"##302", var"##303"}
+function Base.show(io::IO, t::Type{<:(MyCustomType){var"##301", var"##302", var"##303"}}; ) where {var"##301", var"##302", var"##303"}
     if TruncatedStacktraces.VERBOSE[]
-        print(io, string(MyCustomType) * "{" * join([var"##301", var"##302", var"##303"], ", ") * "}")
+        invoke(show, Tuple{IO, Type}, io, t)
     else
-        print(io, string(MyCustomType) * "{" * join([var"##303", var"##301"], ", ") * ", " * "...}")
+        print(io, string(MyCustomType) * "{" * join([var"##303", var"##301"], ", ") * ", " * "…}")
     end
 end
 ```
 """
 macro truncate_stacktrace(l::Symbol, short_display...)
-    l = getproperty(__module__, l)
+    @static if !DISABLE_TRUNCATED_STACKTRACES
+        l = getproperty(__module__, l)
 
-    pcount = __get_parameter_count(l)
-    @assert __maximum(short_display, pcount) <= pcount && __minimum(short_display, 1) >= 1
+        pcount = __get_parameter_count(l)
+        @assert __maximum(short_display, pcount) <= pcount &&
+                __minimum(short_display, 1) >= 1
 
-    name = :(Base.show)
-    whereparams = ntuple(_ -> gensym(), pcount)
-    args = Any[:(io::IO), :(t::Type{$l{$(whereparams...)}})]
-    kwargs = []
+        name = :(Base.show)
+        whereparams = ntuple(_ -> gensym(), pcount)
+        args = Any[:(io::IO), :(t::Type{<:$l{$(whereparams...)}})]
+        kwargs = []
 
-    body = quote
-        if TruncatedStacktraces.VERBOSE[]
-            print(io, string($l) * "{" * join([$(whereparams...)], ", ") * "}")
-        else
-            print(io,
-                  string($l) * "{" * join([$(whereparams[[short_display...]]...)], ", ") *
-                  $(length(short_display) == 0 ? "" : ",") * "…}")
+        body = quote
+            if TruncatedStacktraces.VERBOSE[]
+                invoke(show, Tuple{IO, Type}, io, t)
+            else
+                print(io,
+                      string($l) * "{" *
+                      join([$(whereparams[[short_display...]]...)], ", ") *
+                      $(length(short_display) == 0 ? "" : ",") * "…}")
+            end
         end
+
+        fdef = Dict(:name => name, :args => args, :kwargs => kwargs, :body => body,
+                    :whereparams => whereparams)
+
+        return MacroTools.combinedef(fdef)
     end
-
-    fdef = Dict(:name => name, :args => args, :kwargs => kwargs, :body => body,
-                :whereparams => whereparams)
-
-    return MacroTools.combinedef(fdef)
 end
 
 __maximum(x, ::Int) = maximum(x)

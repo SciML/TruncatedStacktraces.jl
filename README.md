@@ -41,17 +41,15 @@ write an overload on `Base.show` on the DataType which is conditional on `Trunca
 For example, the following does this for the `SciMLBase.ODEProblem`:
 
 ```julia
+@static if !TruncatedStacktraces.DISABLE_TRUNCATED_STACKTRACES
 function Base.show(io::IO,
-                   t::Type{ODEProblem{uType, tType, isinplace, P, F, K, PT}}) where {uType,
-                                                                                     tType,
-                                                                                     isinplace,
-                                                                                     P, F,
-                                                                                     K, PT}
+                   t::Type{<:ODEProblem{uType, tType, isinplace}}) where {uType, tType, isinplace}
     if TruncatedStacktraces.VERBOSE[]
-        print(io, "ODEProblem{$uType, $tType, $isinplace, $P, $F, $K, $PT}")
+        invoke(show, Tuple{IO, Type}, io, t)
     else
         print(io, "ODEProblem{$isinplace,$uType,$tType,…}")
     end
+end
 end
 ```
 
@@ -70,6 +68,32 @@ how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG
 ## Default values
 
 `TruncatedStacktraces.VERBOSE[]` defaults to `false` for non-CI workflows and to `true` for CI jobs.
+
+## Disabling TruncatedStacktraces.jl
+
+TruncatedStacktraces.jl can be disabled using Preferences.jl. To disable it, create a
+`LocalPreferences.toml` with the following entry:
+
+```toml
+[TruncatedStacktraces]
+disable = true
+```
+
+Alternatively, you can generate the `LocalPreferences.toml` using:
+
+```julia
+using Preferences, UUIDs
+
+using TruncatedStacktraces
+Preferences.set_preferences!(TruncatedStacktraces, "disable" => true)
+
+# OR if you don't want to load TruncatedStacktraces.jl
+
+Preferences.set_preferences!(UUID("781d530d-4396-4725-bb49-402e4bee1e77"), "disable" => true)
+```
+
+In either case, you need to reload your packages (depending on TruncatedStacktraces) for the
+change to take effect.
 
 ## FAQ: Why is this not in Base Julia?
 
