@@ -68,7 +68,7 @@ how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG
 ## Default values
 
     * `TruncatedStacktraces.VERBOSE[]` defaults to `false` for non-CI workflows and to `true` for CI jobs.
-    * `TruncatedStacktraces.DISABLE` defaults to `false` for non-CI workflows and to `true` for CI jobs.
+    * `TruncatedStacktraces.DISABLE` defaults to `false`.
 
 ## Disabling TruncatedStacktraces.jl
 
