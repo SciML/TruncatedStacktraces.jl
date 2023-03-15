@@ -3,7 +3,7 @@ module TruncatedStacktraces
 using InteractiveUtils, MacroTools, Preferences
 
 const VERBOSE = Ref(parse(Bool, get(ENV, "CI", "false")))
-const DISABLE_TRUNCATED_STACKTRACES = @load_preference("disable", false)
+const DISABLE = @load_preference("disable", parse(Bool, get(ENV, "CI", "false")))
 
 VERBOSE_MSG = """
 
@@ -12,7 +12,7 @@ Some of the types have been truncated in the stacktrace for improved reading. To
 in the stack trace, evaluate `TruncatedStacktraces.VERBOSE[] = true` and re-run the code."""
 
 function __init__()
-    @static if !DISABLE_TRUNCATED_STACKTRACES
+    @static if !DISABLE
         for type in InteractiveUtils.subtypes(Exception)
             if type == MethodError
                 Base.Experimental.register_error_hint(type) do io, e, args, kwargs
@@ -55,7 +55,7 @@ end
 ```
 """
 macro truncate_stacktrace(l::Symbol, short_display...)
-    @static if !DISABLE_TRUNCATED_STACKTRACES
+    @static if !DISABLE
         l = getproperty(__module__, l)
 
         pcount = __get_parameter_count(l)

@@ -41,7 +41,7 @@ write an overload on `Base.show` on the DataType which is conditional on `Trunca
 For example, the following does this for the `SciMLBase.ODEProblem`:
 
 ```julia
-@static if !TruncatedStacktraces.DISABLE_TRUNCATED_STACKTRACES
+@static if !TruncatedStacktraces.DISABLE
 function Base.show(io::IO,
                    t::Type{<:ODEProblem{uType, tType, isinplace}}) where {uType, tType, isinplace}
     if TruncatedStacktraces.VERBOSE[]
@@ -67,7 +67,8 @@ how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG
 
 ## Default values
 
-`TruncatedStacktraces.VERBOSE[]` defaults to `false` for non-CI workflows and to `true` for CI jobs.
+    * `TruncatedStacktraces.VERBOSE[]` defaults to `false` for non-CI workflows and to `true` for CI jobs.
+    * `TruncatedStacktraces.DISABLE` defaults to `false` for non-CI workflows and to `true` for CI jobs.
 
 ## Disabling TruncatedStacktraces.jl
 
