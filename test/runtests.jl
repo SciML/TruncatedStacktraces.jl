@@ -23,7 +23,12 @@ using Test, TruncatedStacktraces
                            "information\nin the stack trace, evaluate " *
                            "`TruncatedStacktraces.VERBOSE[] = true` and re-run the code.\n"
     end
-    @test error_msg[] == actual_error_msg
+    # Printing the hint message is broken in Julia 1.6
+    @static if v"1.6" <= VERSION < v"1.7"
+        @test_broken error_msg[] == actual_error_msg
+    else
+        @test error_msg[] == actual_error_msg
+    end
 
     TruncatedStacktraces.VERBOSE[] = true
     try
