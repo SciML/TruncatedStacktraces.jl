@@ -37,30 +37,14 @@ TruncatedStacktraces.VERBOSE[] = false
 ## How to Opt A Package Into TruncatedStacktraces.jl
 
 Opting into TruncatedStacktraces.jl is easy: for every type that you want to omit the printing of something,
-write an overload on `Base.show` on the DataType which is conditional on `TruncatedStacktraces.VERBOSE[]`.
-For example, the following does this for the `SciMLBase.ODEProblem`:
-
-```julia
-@static if !TruncatedStacktraces.DISABLE
-function Base.show(io::IO,
-                   t::Type{<:ODEProblem{uType, tType, isinplace}}) where {uType, tType, isinplace}
-    if TruncatedStacktraces.VERBOSE[]
-        invoke(show, Tuple{IO, Type}, io, t)
-    else
-        print(io, "ODEProblem{$isinplace,$uType,$tType,…}")
-    end
-end
-end
-```
-
-Alternatively, the same code can be generated automatically using the convenience macro
-`TruncatedStacktraces.@truncate_stacktrace`:
+use the macro `TruncatedStacktraces.@truncate_stacktrace` like:
 
 ```julia
 TruncatedStacktraces.@truncate_stacktrace ODEProblem 3 1 2
 ```
 
-where `3 1 2` gives the order of the types to print, with indices corresponding to the original type.
+where `3 1 2` gives the order of the types to print, with indices corresponding to the original type. For example,
+on a type `MyType{T1,T2,T3,T4}`, this will change the stacktrace printing to default to `MyType{T3,T1,T2,…}`.
 
 For any new error exception you add to your package, make sure to include the note from TruncatedStacktraces.jl on
 how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG)` to the bottom of any error message.
@@ -95,6 +79,26 @@ Preferences.set_preferences!(UUID("781d530d-4396-4725-bb49-402e4bee1e77"), "disa
 
 In either case, you need to reload your packages (depending on TruncatedStacktraces) for the
 change to take effect.
+
+**TruncatedStacktraces is known to create invalidations, to remove these simply set the preference to disable it!**
+
+## How It's Implemented
+
+This is done by writing an overload on `Base.show` on the DataType which is conditional on `TruncatedStacktraces.VERBOSE[]`.
+For example, the following does this for the `SciMLBase.ODEProblem`:
+
+```julia
+@static if !TruncatedStacktraces.DISABLE
+function Base.show(io::IO,
+                   t::Type{<:ODEProblem{uType, tType, isinplace}}) where {uType, tType, isinplace}
+    if TruncatedStacktraces.VERBOSE[]
+        invoke(show, Tuple{IO, Type}, io, t)
+    else
+        print(io, "ODEProblem{$isinplace,$uType,$tType,…}")
+    end
+end
+end
+```
 
 ## FAQ: Why is this not in Base Julia?
 
