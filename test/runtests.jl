@@ -1,3 +1,8 @@
+
+# default is disable = true, so explicitly enable first
+using Preferences, UUIDs
+Preferences.set_preferences!(UUID("781d530d-4396-4725-bb49-402e4bee1e77"), "disable" => false)
+
 using Test, TruncatedStacktraces
 
 @testset "Test that VERBOSE can remove the notice message" begin
