@@ -3,7 +3,7 @@ module TruncatedStacktraces
 using InteractiveUtils, MacroTools, Preferences
 
 const VERBOSE = Ref(parse(Bool, get(ENV, "CI", "false")))
-const DISABLE = @load_preference("disable", false)
+const DISABLE = @load_preference("disable", true) # opt-in
 
 VERBOSE_MSG = """
 
