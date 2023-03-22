@@ -68,12 +68,13 @@ macro truncate_stacktrace(l::Symbol, short_display...)
         kwargs = []
 
         body = quote
-            if TruncatedStacktraces.VERBOSE[]
+            wparams = [$(whereparams[[short_display...]]...)]
+            any_not_defined = any(!@isdefined(w) for w in wparams)
+            if TruncatedStacktraces.VERBOSE[] || any_not_defined
                 invoke(show, Tuple{IO, Type}, io, t)
             else
                 print(io,
-                      string($l) * "{" *
-                      join([$(whereparams[[short_display...]]...)], ", ") *
+                      string($l) * "{" * join(wparams, ",") *
                       $(length(short_display) == 0 ? "" : ",") * "…}")
             end
         end
