@@ -4,6 +4,35 @@ Don't you wish Julia stacktraces were simpler? Introducing TruncatedStacktraces.
 package is to give package authors a single uniform system for implementing truncation of type printing
 in stack traces.
 
+## Enabling TruncatedStacktraces.jl
+
+TruncatedStacktraces.jl is currently disabled by default, as it causes invalidations which will slow down package loading.
+
+It can be enabled using Preferences.jl. To enable it, create a `LocalPreferences.toml` with the following entry:
+
+```toml
+[TruncatedStacktraces]
+disable = false
+```
+
+Alternatively, you can generate the `LocalPreferences.toml` using:
+
+```julia
+using Preferences, UUIDs
+
+using TruncatedStacktraces
+Preferences.set_preferences!(TruncatedStacktraces, "disable" => false)
+
+# OR if you don't want to load TruncatedStacktraces.jl
+
+Preferences.set_preferences!(UUID("781d530d-4396-4725-bb49-402e4bee1e77"), "disable" => false)
+```
+
+In either case, you need to reload your packages (depending on TruncatedStacktraces) for the
+change to take effect.
+
+**TruncatedStacktraces is known to create invalidations, to remove these simply set the preference to disable it!**
+
 ## Users: How to Interact with TruncatedStacktraces.jl
 
 If a package you are using is making use of TruncatedStacktraces.jl, you will see shorter stack traces. Everything
@@ -52,35 +81,7 @@ how to effect the type printing. This is done by adding `println(io, VERBOSE_MSG
 ## Default values
 
 * `TruncatedStacktraces.VERBOSE[]` defaults to `false` for non-CI workflows and to `true` for CI jobs.
-* `TruncatedStacktraces.DISABLE` defaults to `false`.
-
-## Disabling TruncatedStacktraces.jl
-
-TruncatedStacktraces.jl can be disabled using Preferences.jl. To disable it, create a
-`LocalPreferences.toml` with the following entry:
-
-```toml
-[TruncatedStacktraces]
-disable = true
-```
-
-Alternatively, you can generate the `LocalPreferences.toml` using:
-
-```julia
-using Preferences, UUIDs
-
-using TruncatedStacktraces
-Preferences.set_preferences!(TruncatedStacktraces, "disable" => true)
-
-# OR if you don't want to load TruncatedStacktraces.jl
-
-Preferences.set_preferences!(UUID("781d530d-4396-4725-bb49-402e4bee1e77"), "disable" => true)
-```
-
-In either case, you need to reload your packages (depending on TruncatedStacktraces) for the
-change to take effect.
-
-**TruncatedStacktraces is known to create invalidations, to remove these simply set the preference to disable it!**
+* `TruncatedStacktraces.DISABLE` defaults to `true`.
 
 ## How It's Implemented
 
