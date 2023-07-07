@@ -4,6 +4,9 @@ Don't you wish Julia stacktraces were simpler? Introducing TruncatedStacktraces.
 package is to give package authors a single uniform system for implementing truncation of type printing
 in stack traces.
 
+> **Note**
+> Starting v1.10 a similar feature is inbuilt into julia. Starting julia v1.10, this package does nothing!
+
 ## Enabling TruncatedStacktraces.jl
 
 TruncatedStacktraces.jl is currently disabled by default, as it causes invalidations which will slow down package loading.
