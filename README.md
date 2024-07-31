@@ -1,5 +1,12 @@
 # TruncatedStacktraces.jl: Truncated and Simpler Stacktraces for the Julia Programming Language
 
+## Deprecation Note
+
+This library is deprecated with Julia v1.10 which has better stacktraces that truncate in this form
+automatically.
+
+## Introduction
+
 Don't you wish Julia stacktraces were simpler? Introducing TruncatedStacktraces.jl! The purpose of this
 package is to give package authors a single uniform system for implementing truncation of type printing
 in stack traces.
